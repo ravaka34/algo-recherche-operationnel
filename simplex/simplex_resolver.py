@@ -1,5 +1,5 @@
-from tools.simplex_tableau import SimplexTableau
-from tools.tableau_builder import TableauBuilder
+from simplex_tableau import SimplexTableau
+from tableau_builder import TableauBuilder
 
 class SimplexResolver:
 
@@ -81,7 +81,7 @@ class SimplexResolver:
             self.update_in_base_var(row_pivot, col_pivot)
             pivot = self.search_pivot()
 
-tableau_builder = TableauBuilder('problem.txt')
-simplex = SimplexResolver(tableau_builder.build(), tableau_builder.problem_type)
-simplex.solve()
-simplex.tableau.render()
+# tableau_builder = TableauBuilder('problem.txt')
+# simplex = SimplexResolver(tableau_builder.build(), tableau_builder.problem_type)
+# simplex.solve()
+# simplex.tableau.render()

@@ -1,14 +1,30 @@
-from .problem_parser import ProblemParser
-from .constraint_standarizer import ConstraintStandarizer
-from .simplex_tableau import SimplexTableau
+from problem_parser import ProblemParser
+from constraint_standarizer import ConstraintStandarizer
+from simplex_tableau import SimplexTableau
+from fractions import Fraction
 
 class TableauBuilder:
 
     def __init__(self, filename):
         self.parser = ProblemParser(filename)
         self.standarizer = ConstraintStandarizer(self.parser.constraints)
-        self.vars = self.parser.decision_vars + self.standarizer.new_vars
+        self.vars = sorted(self.parser.decision_vars + self.standarizer.new_vars, key=self.custom_sort_vars_key)
         self.problem_type = self.parser.problem_type
+    
+    def custom_sort_vars_key(self, item):
+        # Define the desired order of elements
+        order = {'x': 0, 'e': 1, 'a': 2}
+
+        # Extract the prefix (e.g., 'x', 'e', 'a')
+        prefix = item[0]
+
+        # Return the index based on the desired order
+        return order.get(prefix, float('inf')), item
+    
+    def transform_nbr_str_to_float(self, nbr_str):
+        #So that we can handle fraction number
+        fraction = Fraction(nbr_str)
+        return float(fraction)
 
     def build(self):
         return SimplexTableau(
@@ -21,7 +37,7 @@ class TableauBuilder:
 
     def build_objective_array(self):
         objective_array = [
-            float(item.split(".")[0]) for item in self.parser.objective.split()[1:]
+            self.transform_nbr_str_to_float(item.split(".")[0]) for item in self.parser.objective.split()[1:]
         ]
         return objective_array + [0] * len(self.standarizer.new_vars)
 
@@ -35,7 +51,7 @@ class TableauBuilder:
         couples = []
         vector_constraint = []
 
-        # Skip the signe and the last number
+        # Skip the sign and the last number
         for item in constraint[0:-2]:
             couples.append(item.split("."))
 
@@ -44,7 +60,7 @@ class TableauBuilder:
             find_in = False
             for couple in couples:
                 if couple[1] == var:
-                    vector_constraint.append(float(couple[0]))
+                    vector_constraint.append(self.transform_nbr_str_to_float(couple[0]))
                     find_in = True
                     break
             if not find_in:
@@ -54,7 +70,7 @@ class TableauBuilder:
     def build_solution_array(self):
         solution_array = []
         for constraint in self.standarizer.standarized:
-            solution_array.append(float(constraint[-1]))
+            solution_array.append(self.transform_nbr_str_to_float(constraint[-1]))
         solution_array.append(0)
         return solution_array
 

@@ -1,3 +1,5 @@
+from problem_parser import ProblemParser
+
 class ConstraintStandarizer:
 
     def __init__(self, constraints):
@@ -14,6 +16,21 @@ class ConstraintStandarizer:
                 self.nbr_ecart_var += 1
                 split_constraint.insert(i, "+1.e" + str(self.nbr_ecart_var))
                 self.new_vars.append("e" + str(self.nbr_ecart_var))
+                break
+
+            elif split_constraint[i] == ">=":
+                self.nbr_ecart_var += 1
+                self.nbr_artificial_var += 1
+                split_constraint.insert(i, "+1.a" + str(self.nbr_artificial_var))
+                split_constraint.insert(i, "-1.e" + str(self.nbr_ecart_var))
+                self.new_vars.append("e"+ str(self.nbr_ecart_var))
+                self.new_vars.append("a"+ str(self.nbr_artificial_var))
+                break
+
+            elif split_constraint[i] == "=":
+                self.nbr_artificial_var += 1
+                split_constraint.insert(i, "+1.a" + str(self.nbr_artificial_var))
+                self.new_vars.append("a"+ str(self.nbr_artificial_var))
                 break
         return split_constraint
 

@@ -7,6 +7,24 @@ class SimplexTableau:
         self.solutions = solutions
         self.z = z
 
+    def removed_artificial_version(self, row):
+        new_row = []
+        for i in range(len(row)):
+            if self.vars[i][0] != 'a':
+                new_row.append(row[i])
+        return new_row
+       
+    def remove_artificial_cols(self):
+        for i in range(len(self.constraints)):
+            self.constraints[i] = self.removed_artificial_version(self.constraints[i])
+        self.z = self.removed_artificial_version(self.z)
+        self.vars = self.removed_artificial_version(self.vars)
+
+    def add_row(self, according_base_vars, constraint, solution):
+        self.in_base_vars.append(according_base_vars)
+        self.constraints.append(constraint)
+        self.solutions.insert(-1, solution)
+
     def render(self):
         # Determine the number of variables
         num_vars = len(self.vars)
