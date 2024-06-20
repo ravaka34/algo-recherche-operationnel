@@ -16,10 +16,12 @@ class PLNE(Simplex2Phases):
     def is_subtree_pruned(self, z_value):
         if self.optimum_z_value == None:
             return False
+        # Probleme de maximisation
         if self.problem_type == 1:
-            return z_value >= self.optimum_z_value
-        if self.problem_type != 1:
             return z_value <= self.optimum_z_value
+        #Probleme de minimisation
+        if self.problem_type == -1:
+            return z_value >= self.optimum_z_value
 
     def is_constraint_already_used(self, constraint):
         # Compare the current result against recorded results
@@ -52,7 +54,7 @@ class PLNE(Simplex2Phases):
                 whole_number = int(result[key])
                 signes = "<= >="
                 for signe in signes.split():
-                    constraint = "\n1."+key+" "+signe+" "+str(whole_number + (signe == '>='))
+                    constraint = "\n1*"+key+" "+signe+" "+str(whole_number + (signe == '>='))
                     if not self.is_constraint_already_used(constraint):
                         self.recorded_constraints.append(constraint)
                         print(self.original_problem+constraint)
@@ -69,7 +71,8 @@ class PLNE(Simplex2Phases):
         
 
 
-str_problem = "Min -8.x1 -5.x2\n1.x1 +1.x2 <= 6\n9.x1 +5.x2 <= 45"
+# str_problem = "Min -8*x1 -5*x2\n1*x1 +1*x2 <= 6\n9*x1 +5*x2 <= 45" OK
+str_problem = "Max 3*x1 +4*x2\n2*x1 +1*x2 <= 6\n2*x1 +3*x2 <= 9"
 
 tableau_builder = TableauBuilder(str_problem=str_problem)
 print(PLNE(tableau_builder.build(), tableau_builder.problem_type).solve())

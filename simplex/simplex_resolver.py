@@ -10,12 +10,13 @@ class SimplexResolver:
 
     def col_pivot(self):
         # Choix variable entrante
-        # recherche maximum positive ou minimum negative
-        if self.problem_type == 1:
+        # minimum car donc max positive car la valeur de notre z est en accord mais pas -z
+        if self.problem_type == -1:
             max_value = max(self.tableau.z)
             if max_value <= 0:
                 return None
             return self.tableau.z.index(max_value)
+        #Probleme de maximisation
         else:
             min_value = min(self.tableau.z)
             if min_value >= 0:
@@ -29,7 +30,7 @@ class SimplexResolver:
             if self.tableau.constraints[i][col_pivot] == 0:
                 continue
             rapport = self.tableau.solutions[i] / self.tableau.constraints[i][col_pivot]
-            if (rapport > 0 and rapport < minimum) or (
+            if (rapport >= 0 and rapport < minimum) or (
                 rapport == minimum and self.tableau.in_base_vars[i][0] == "a"
             ):
                 row_pivot = i
@@ -83,8 +84,6 @@ class SimplexResolver:
             x - pseudo_pivot * y
             for x, y in zip(self.tableau.z, self.tableau.constraints[row_pivot])
         ]
-        # print(self.tableau.solutions[-1],pseudo_pivot, self.tableau.solutions[row_pivot])
-        print(self.tableau.solutions[-1]- pseudo_pivot * self.tableau.solutions[row_pivot])
         self.tableau.solutions[-1] = (
             self.tableau.solutions[-1]
             - pseudo_pivot * self.tableau.solutions[row_pivot]

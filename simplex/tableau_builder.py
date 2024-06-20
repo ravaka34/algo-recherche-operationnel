@@ -38,7 +38,7 @@ class TableauBuilder:
 
     def build_objective_array(self):
         objective_array = [
-            self.transform_nbr_str_to_float(item.split(".")[0]) for item in self.parser.objective.split()[1:]
+            -self.transform_nbr_str_to_float(item.split("*")[0]) for item in self.parser.objective.split()[1:]
         ]
         return objective_array + [0] * len(self.standarizer.new_vars)
 
@@ -54,7 +54,7 @@ class TableauBuilder:
 
         # Skip the sign and the last number
         for item in constraint[0:-2]:
-            couples.append(item.split("."))
+            couples.append(item.split("*"))
 
         # Seach for the coeff of the var in the constraint
         for var in self.vars:
@@ -78,5 +78,5 @@ class TableauBuilder:
     def build_base_var(self):
         base = []
         for constraint in self.standarizer.standarized:
-            base.append(constraint[-3].split(".")[1])
+            base.append(constraint[-3].split("*")[1])
         return base

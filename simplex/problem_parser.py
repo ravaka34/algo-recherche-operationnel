@@ -36,4 +36,4 @@ class ProblemParser:
         return 1 if self.objective.split()[0].lower() == "max" else -1
 
     def retrieve_decision_vars(self):
-        return [item.split(".")[1] for item in self.objective.split()[1:]]
+        return [item.split("*")[1] for item in self.objective.split()[1:]]
