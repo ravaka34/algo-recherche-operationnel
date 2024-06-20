@@ -2,62 +2,57 @@ from simplex_resolver import SimplexResolver
 from tableau_builder import TableauBuilder
 
 class Simplex2Phases(SimplexResolver):
-
-    def express_var_from_constraint(self, var_name, constraint):
-        expression = []
-        for i in range(0, len(constraint)):
-            if self.tableau.vars[i] != var_name:
-                expression.append(-1*constraint[i])
-            else:
-                expression.append(0)
-        return expression
-
-    def get_matrix_expression(self, var_name):
-        nbr_vars = len(self.tableau.vars)
-        i = 0
-        for constraint in self.constraints:
-            for j in range(0, nbr_vars):
-                if self.tableau.vars[j] == var_name and constraint[j] != 0:
-                    expression = self.express_var_from_constraint(var_name, constraint)
-                    expression.append(self.tableau.solutions[i])
-                    return expression
-            i += 1
-
-    def sum_artificial_var(self):
-        expressions = []
-        for var_name in self.tableau.vars:
-            if var_name[0] == 'a':
-                expressions.append(self.get_matrix_expression(var_name))
-        #do a matrix sum between the expressions
-        return [sum(x) for x in zip(*expressions)]
     
     def phaseone(self):
-        real_problem_type = self.problem_type
         self.problem_type = -1 #Min
-        #adding the the old problem into the simplex tableau
-        self.tableau.add_row('O', self.tableau.z, self.tableau.solutions[-1])
-        #adding the new problem to solve
-        artificial_var_sum = self.sum_artificial_var()
-        self.tableau.z = artificial_var_sum[:-1]
-        self.tableau.solutions[-1] = -artificial_var_sum[-1]
+        for i in range(len(self.tableau.vars)):
+            if 'a' in self.tableau.vars[i]:
+                self.tableau.z[i] = 1
+            else:
+                self.tableau.z[i] = 0
+        self.update_z()
+        print('phase one')
+        self.tableau.render()
         super().solve()
-        self.problem_type = real_problem_type
-
-    def phasetwo(self):
-        #Remove the last row and the artificial columns
-        self.tableau.z = self.constraints[-1]
-        self.tableau.solutions.pop()
-        self.tableau.constraints.pop()
-        self.tableau.in_base_vars.pop()
+        
+    def update_z(self):
+        for col in range(len(self.tableau.z)):
+            if self.tableau.vars[col] in self.tableau.in_base_vars:
+                row = self.tableau.in_base_vars.index(self.tableau.vars[col])
+                print(row, col)
+                self.nullify_same_cols_objective_pivot(row, col)
+            
+    def phasetwo(self, original_z):
+        self.tableau.z = original_z
         #Remove the artificial cols
+        print('avant')
+        self.tableau.render()
         self.tableau.remove_artificial_cols()
-        super().solve()
+        self.update_z()
+        # self.tableau.z = original_z
+        print('phase two')
+        self.tableau.render()
+        return super().solve()
+    
+    def is_infeasible(self):
+        return self.tableau.solutions[-1] != 0
 
     def solve(self):
-        self.phaseone()
-        self.tableau.render()
-        self.phasetwo()
-        self.tableau.render()
-        
-tableau_builder = TableauBuilder('problem.txt')
+        if self.tableau.has_artificial_var():
+            real_problem_type = self.problem_type
+            original_problem = self.tableau.z[:]
+            self.phaseone()
+            if self.is_infeasible():
+                raise Exception('Ce probleme est Infeasible')
+            self.problem_type = real_problem_type
+            result = self.phasetwo(original_problem)
+            return result
+        result = super().solve()
+        return result
+    
+
+str_problem = "Min -8.x1 -5.x2\n1.x1 +1.x2 <= 6\n1.x1 >= 5\n9.x1 +5.x2 <= 45"
+# str_problem = "Max 12.x1 +23.x2 +41.x3\n1.x1 +1.x2 +2.x3 <= 8\n-5.x1 +5.x2 +1.x3 = 3\n3.x1 +3.x2 +1.x3 >= 5"
+# str_problem = "Max 2.x1 +1.x2\n1.x1 +1.x2 >= 2\n1.x1 >= 1\n1.x1 +1.x2 <= 5"
+tableau_builder = TableauBuilder(str_problem=str_problem)
 print(Simplex2Phases(tableau_builder.build(), tableau_builder.problem_type).solve())

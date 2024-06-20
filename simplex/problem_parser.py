@@ -1,7 +1,8 @@
 class ProblemParser:
 
-    def __init__(self, filename):
+    def __init__(self, filename=None, str_problem=None):
         self.filename = filename
+        self.str_problem = str_problem
         self.lines = []
         self.objective = []
         self.constraints = []
@@ -18,8 +19,12 @@ class ProblemParser:
 
     def retrieve_problem_lines(self):
         # Read the file and split by '\n'
-        with open(self.filename, mode="r", newline="\n") as file:
-            return file.read().split("\n")
+        if self.str_problem != None:
+            return self.str_problem.split("\n")
+        else:
+            with open(self.filename, mode="r", newline="\n") as file:
+                self.str_problem = file.read()
+                return self.str_problem.split("\n")
 
     def retrieve_objective(self):
         return self.lines[0]

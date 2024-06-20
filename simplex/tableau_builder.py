@@ -5,8 +5,8 @@ from fractions import Fraction
 
 class TableauBuilder:
 
-    def __init__(self, filename):
-        self.parser = ProblemParser(filename)
+    def __init__(self, filename=None, str_problem=None):
+        self.parser = ProblemParser(filename=filename, str_problem=str_problem)
         self.standarizer = ConstraintStandarizer(self.parser.constraints)
         self.vars = sorted(self.parser.decision_vars + self.standarizer.new_vars, key=self.custom_sort_vars_key)
         self.problem_type = self.parser.problem_type
@@ -23,8 +23,8 @@ class TableauBuilder:
     
     def transform_nbr_str_to_float(self, nbr_str):
         #So that we can handle fraction number
-        fraction = Fraction(nbr_str)
-        return float(fraction)
+        # fraction = Fraction(nbr_str)
+        return float(nbr_str)
 
     def build(self):
         return SimplexTableau(
@@ -33,6 +33,7 @@ class TableauBuilder:
             self.build_constraints_array(),
             self.build_solution_array(),
             self.build_objective_array(),
+            self.parser.str_problem
         )
 
     def build_objective_array(self):

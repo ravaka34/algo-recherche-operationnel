@@ -1,11 +1,12 @@
 class SimplexTableau:
 
-    def __init__ (self, vars=[], in_base_vars = [], constraints = [[]], solutions = [], z = []):
+    def __init__ (self, vars=[], in_base_vars = [], constraints = [[]], solutions = [], z = [], str_problem = ""):
         self.vars = vars
         self.in_base_vars = in_base_vars
         self.constraints = constraints
         self.solutions = solutions
         self.z = z
+        self.str_problem = str_problem
 
     def removed_artificial_version(self, row):
         new_row = []
@@ -20,10 +21,11 @@ class SimplexTableau:
         self.z = self.removed_artificial_version(self.z)
         self.vars = self.removed_artificial_version(self.vars)
 
-    def add_row(self, according_base_vars, constraint, solution):
-        self.in_base_vars.append(according_base_vars)
-        self.constraints.append(constraint)
-        self.solutions.insert(-1, solution)
+    def has_artificial_var(self):
+        for var in self.vars:
+            if var[0] == 'a':
+                return True
+        return False
 
     def render(self):
         # Determine the number of variables
