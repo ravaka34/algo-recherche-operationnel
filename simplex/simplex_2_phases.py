@@ -42,9 +42,9 @@ class Simplex2Phases(SimplexResolver):
             real_problem_type = self.problem_type
             original_problem = self.tableau.z[:]
             self.phaseone()
+            self.problem_type = real_problem_type
             if self.is_infeasible():
                 raise Exception('Ce probleme est Infeasible')
-            self.problem_type = real_problem_type
             result = self.phasetwo(original_problem)
             return result
         result = super().solve()

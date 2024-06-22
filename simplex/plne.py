@@ -4,8 +4,8 @@ from simplex_tableau import SimplexTableau
 
 class PLNE(Simplex2Phases):
 
-    def __init__(self, simplex_tableau: SimplexTableau, problem_type):
-        super().__init__(simplex_tableau, problem_type)
+    def __init__(self, simplex_tableau: SimplexTableau, problem_type, fractional_result = False):
+        super().__init__(simplex_tableau, problem_type, fractional_result)
         self.original_problem = self.tableau.str_problem
         self.original_tab = self.tableau
         self.result_keys = None
@@ -17,6 +17,7 @@ class PLNE(Simplex2Phases):
             return False
         # Probleme de maximisation
         if self.problem_type == 1:
+            print('eto')
             return z_value <= self.optimum_z_value
         #Probleme de minimisation
         if self.problem_type == -1:
@@ -68,11 +69,11 @@ class PLNE(Simplex2Phases):
         
 
 
-str_problem = "Min -8*x1 -5*x2\n1*x1 +1*x2 <= 6\n9*x1 +5*x2 <= 45" 
+# str_problem = "Min -8*x1 -5*x2\n1*x1 +1*x2 <= 6\n9*x1 +5*x2 <= 45" 
 # str_problem = "Max 3*x1 +4*x2\n2*x1 +1*x2 <= 6\n2*x1 +3*x2 <= 9" 
 # str_problem = "Max 10*x1 +11*x2\n10*x1 +12*x2 <= 59" 
 # str_problem = "Max 5*x1 +6*x2\n1*x1 +1*x2 <= 5\n4*x1 +7*x2 <= 28"
-# str_problem = "Max 5*x1 +4*x2\n1*x1 +1*x2 <= 5\n10*x1 +6*x2 <= 45"
+str_problem = "Max 5*x1 +4*x2\n1*x1 +1*x2 <= 5\n10*x1 +6*x2 <= 45"
 # str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
 
 tableau_builder = TableauBuilder(str_problem=str_problem)

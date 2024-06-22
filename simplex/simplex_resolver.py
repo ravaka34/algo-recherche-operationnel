@@ -4,19 +4,20 @@ from fractions import Fraction
 
 class SimplexResolver:
 
-    def __init__(self, simplex_tableau: SimplexTableau, problem_type):
+    def __init__(self, simplex_tableau: SimplexTableau, problem_type, fractional_result = False):
         self.tableau = simplex_tableau
         self.problem_type = problem_type
+        self.fractional_result = fractional_result
 
     def col_pivot(self):
         # Choix variable entrante
-        # minimum car donc max positive car la valeur de notre z est en accord mais pas -z
+        # minimisation maximum positive
         if self.problem_type == -1:
             max_value = max(self.tableau.z)
             if max_value <= 0:
                 return None
             return self.tableau.z.index(max_value)
-        #Probleme de maximisation
+        #maximisation minimum negative
         else:
             min_value = min(self.tableau.z)
             if min_value >= 0:
@@ -113,11 +114,13 @@ class SimplexResolver:
                 for i in range(len(self.tableau.in_base_vars)):
                     nbr = self.tableau.solutions[i]
                     if self.tableau.in_base_vars[i] == var:
-                        if abs(nbr % 1) <= 1e-6:
-                            result[var] = nbr
+                        if self.fractional_result:
+                            if abs(nbr % 1) <= 1e-6:
+                                result[var] = nbr
+                            else:
+                                result[var] = Fraction(nbr).limit_denominator()
                         else:
-                            result[var] = Fraction(nbr).limit_denominator()
-                       
+                            result[var] = nbr
                         break
                 else:
                     result[var] = 0
