@@ -23,8 +23,9 @@ class TableauBuilder:
     
     def transform_nbr_str_to_float(self, nbr_str):
         #So that we can handle fraction number
-        # fraction = Fraction(nbr_str)
-        return float(nbr_str)
+        fraction = Fraction(nbr_str)
+        # return float(nbr_str)
+        return float(fraction)
 
     def build(self):
         return SimplexTableau(

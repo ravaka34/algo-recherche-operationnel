@@ -1,6 +1,6 @@
 from simplex_tableau import SimplexTableau
 from tableau_builder import TableauBuilder
-
+from fractions import Fraction
 
 class SimplexResolver:
 
@@ -109,14 +109,17 @@ class SimplexResolver:
         result = {}
         for var in self.tableau.vars:
             if var[0] == "x":
-                found = False
                 # Search the value of the variable among the in base vars
                 for i in range(len(self.tableau.in_base_vars)):
+                    nbr = self.tableau.solutions[i]
                     if self.tableau.in_base_vars[i] == var:
-                        result[var] = self.tableau.solutions[i]
-                        found = True
+                        if abs(nbr % 1) <= 1e-6:
+                            result[var] = nbr
+                        else:
+                            result[var] = Fraction(nbr).limit_denominator()
+                       
                         break
-                if not found:
+                else:
                     result[var] = 0
         result["z"] = self.tableau.solutions[-1]
         return result

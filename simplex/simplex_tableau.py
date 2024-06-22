@@ -1,3 +1,5 @@
+from fractions import Fraction
+
 class SimplexTableau:
 
     def __init__ (self, vars=[], in_base_vars = [], constraints = [[]], solutions = [], z = [], str_problem = ""):
@@ -27,6 +29,13 @@ class SimplexTableau:
                 return True
         return False
 
+    def render_float(self, nbr):
+        if abs(nbr % 1) <= 1e-6:
+           return str(nbr)
+        else:
+            fraction = Fraction(nbr).limit_denominator()
+            return f"{fraction.numerator}/{fraction.denominator}"
+
     def render(self):
         # Determine the number of variables
         num_vars = len(self.vars)
@@ -45,13 +54,15 @@ class SimplexTableau:
         for i in range(len(self.constraints)):
             row = "|{:^{width}}|".format(self.in_base_vars[i], width=total_width)
             for j in range(num_vars):
-                row += "{:^{width}}|".format(self.constraints[i][j], width=total_width)
-            row += "{:^{width}}|".format(self.solutions[i], width=total_width)
+                # row += "{:^{width}}|".format(self.constraints[i][j], width=total_width)
+                row += "{:^{width}}|".format(self.render_float(self.constraints[i][j]), width=total_width)
+            row += "{:^{width}}|".format(self.render_float(self.solutions[i]), width=total_width)
             print(row)
 
         # Render the last row with the objective function coefficients
         row = "|{:^{width}}|".format("z", width=total_width)
         for coefficient in self.z:
-            row += "{:^{width}}|".format(coefficient, width=total_width)
-        row += "{:^{width}}|".format(self.solutions[-1], width=total_width)
+            row += "{:^{width}}|".format(self.render_float(coefficient), width=total_width)
+        row += "{:^{width}}|".format(self.render_float(self.solutions[-1]), width=total_width)
         print(row)
+        print("\n")

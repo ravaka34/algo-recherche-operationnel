@@ -11,7 +11,6 @@ class PLNE(Simplex2Phases):
         self.result_keys = None
         self.optimum_z_value = None
         self.optimum_result = {}
-        self.recorded_constraints = []
 
     def is_subtree_pruned(self, z_value):
         if self.optimum_z_value == None:
@@ -22,14 +21,6 @@ class PLNE(Simplex2Phases):
         #Probleme de minimisation
         if self.problem_type == -1:
             return z_value >= self.optimum_z_value
-
-    def is_constraint_already_used(self, constraint):
-        # Compare the current result against recorded results
-        for record in self.recorded_constraints:
-            if record == constraint :
-                return True
-        return False
-                    
     
     def brunch(self, tableau):
         #Relaxation
@@ -41,7 +32,6 @@ class PLNE(Simplex2Phases):
             return
         
         #sous-branche est elague ne fournit pas de solution plus optimale que notre branche
-        
         if self.is_subtree_pruned(result['z']):
             print('z value substree is pruned = '+ str(result['z'])+' z optimum value '+str(self.optimum_z_value))
             return 
@@ -55,24 +45,37 @@ class PLNE(Simplex2Phases):
                 signes = "<= >="
                 for signe in signes.split():
                     constraint = "\n1*"+key+" "+signe+" "+str(whole_number + (signe == '>='))
-                    if not self.is_constraint_already_used(constraint):
-                        self.recorded_constraints.append(constraint)
-                        print(self.original_problem+constraint)
-                        tab1 = TableauBuilder(str_problem=self.original_problem+constraint).build()
-                        self.brunch(tab1)
+                    print(tableau.str_problem+constraint)
+                    tab1 = TableauBuilder(str_problem=tableau.str_problem+constraint).build()
+                    self.brunch(tab1)
 
         if all_integer and abs(result['z'] % 1) <= 1e-6:
-            self.optimum_result = result
+            self.optimum_result ['result'] = result
+            self.optimum_result ['tableau'] = tableau
             self.optimum_z_value = result['z']
 
     def solve(self):
         self.brunch(self.tableau)
         return self.optimum_result
+    
+    def render_result(self):
+        print('The optimum result is :')
+        tableau = self.optimum_result['tableau']
+        print(tableau.str_problem)
+        tableau.render()
+        print(self.optimum_result['result'])
+        
         
 
 
-# str_problem = "Min -8*x1 -5*x2\n1*x1 +1*x2 <= 6\n9*x1 +5*x2 <= 45" OK
-str_problem = "Max 3*x1 +4*x2\n2*x1 +1*x2 <= 6\n2*x1 +3*x2 <= 9"
+str_problem = "Min -8*x1 -5*x2\n1*x1 +1*x2 <= 6\n9*x1 +5*x2 <= 45" 
+# str_problem = "Max 3*x1 +4*x2\n2*x1 +1*x2 <= 6\n2*x1 +3*x2 <= 9" 
+# str_problem = "Max 10*x1 +11*x2\n10*x1 +12*x2 <= 59" 
+# str_problem = "Max 5*x1 +6*x2\n1*x1 +1*x2 <= 5\n4*x1 +7*x2 <= 28"
+# str_problem = "Max 5*x1 +4*x2\n1*x1 +1*x2 <= 5\n10*x1 +6*x2 <= 45"
+# str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
 
 tableau_builder = TableauBuilder(str_problem=str_problem)
-print(PLNE(tableau_builder.build(), tableau_builder.problem_type).solve())
+plne_solver = PLNE(tableau_builder.build(), tableau_builder.problem_type)
+plne_solver.solve()
+plne_solver.render_result()
