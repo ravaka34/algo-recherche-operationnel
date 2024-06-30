@@ -73,7 +73,8 @@ class PLNE(Simplex2Phases):
 # str_problem = "Max 3*x1 +4*x2\n2*x1 +1*x2 <= 6\n2*x1 +3*x2 <= 9" 
 # str_problem = "Max 10*x1 +11*x2\n10*x1 +12*x2 <= 59" 
 # str_problem = "Max 5*x1 +6*x2\n1*x1 +1*x2 <= 5\n4*x1 +7*x2 <= 28"
-str_problem = "Max 5*x1 +4*x2\n1*x1 +1*x2 <= 5\n10*x1 +6*x2 <= 45"
+# str_problem = "Max 5x1 + 4x2\n1*x1 +x2 <= 5\n10x1 - 6x2 <= 45"
+str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 -2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
 # str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
 
 tableau_builder = TableauBuilder(str_problem=str_problem)
