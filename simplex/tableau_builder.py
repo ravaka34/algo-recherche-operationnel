@@ -5,7 +5,8 @@ from fractions import Fraction
 
 class TableauBuilder:
 
-    def __init__(self, filename=None, str_problem=None):
+    def __init__(self, filename=None, str_problem=None, fract_result = False):
+        self.fract_result = fract_result
         self.parser = ProblemParser(filename=filename, str_problem=str_problem)
         self.standarizer = ConstraintStandarizer(self.parser.constraints)
         self.vars = sorted(self.parser.decision_vars + self.standarizer.new_vars, key=self.custom_sort_vars_key)
@@ -34,7 +35,8 @@ class TableauBuilder:
             self.build_constraints_array(),
             self.build_solution_array(),
             self.build_objective_array(),
-            self.parser.str_problem
+            self.parser.str_problem,
+            self.fract_result
         )
 
     def build_objective_array(self):

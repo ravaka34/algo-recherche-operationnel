@@ -17,11 +17,12 @@ class PLNE(Simplex2Phases):
             return False
         # Probleme de maximisation
         if self.problem_type == 1:
-            print('eto')
             return z_value <= self.optimum_z_value
+            # return z_value < self.optimum_z_value
         #Probleme de minimisation
         if self.problem_type == -1:
             return z_value >= self.optimum_z_value
+            # return z_value > self.optimum_z_value
     
     def brunch(self, tableau):
         #Relaxation
@@ -47,7 +48,7 @@ class PLNE(Simplex2Phases):
                 for signe in signes.split():
                     constraint = "\n1*"+key+" "+signe+" "+str(whole_number + (signe == '>='))
                     print(tableau.str_problem+constraint)
-                    tab1 = TableauBuilder(str_problem=tableau.str_problem+constraint).build()
+                    tab1 = TableauBuilder(str_problem=tableau.str_problem+constraint, fract_result=self.tableau.fract_result).build()
                     self.brunch(tab1)
 
         if all_integer and abs(result['z'] % 1) <= 1e-6:
@@ -60,24 +61,28 @@ class PLNE(Simplex2Phases):
         return self.optimum_result
     
     def render_result(self):
+        if 'tableau' not in self.optimum_result:
+            print('Pas de solution')
+            return
         print('The optimum result is :')
         tableau = self.optimum_result['tableau']
         print(tableau.str_problem)
         tableau.render()
-        print(self.optimum_result['result'])
+        self.print_result(self.optimum_result['result'])
+        # print(self.optimum_result['result'])
         
         
-
-
 # str_problem = "Min -8*x1 -5*x2\n1*x1 +1*x2 <= 6\n9*x1 +5*x2 <= 45" 
 # str_problem = "Max 3*x1 +4*x2\n2*x1 +1*x2 <= 6\n2*x1 +3*x2 <= 9" 
 # str_problem = "Max 10*x1 +11*x2\n10*x1 +12*x2 <= 59" 
 # str_problem = "Max 5*x1 +6*x2\n1*x1 +1*x2 <= 5\n4*x1 +7*x2 <= 28"
 # str_problem = "Max 5x1 + 4x2\n1*x1 +x2 <= 5\n10x1 - 6x2 <= 45"
-str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 -2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
+# str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 -2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
 # str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
+str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
+# str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n3*x1 +2*x2 +1*x3 >= 46\n1*x1 +1*x2 +4*x3 <= 38"
 
-tableau_builder = TableauBuilder(str_problem=str_problem)
-plne_solver = PLNE(tableau_builder.build(), tableau_builder.problem_type)
+tableau_builder = TableauBuilder(str_problem=str_problem, fract_result=True)
+plne_solver = PLNE(tableau_builder.build(), tableau_builder.problem_type, fractional_result=False)
 plne_solver.solve()
 plne_solver.render_result()

@@ -1,6 +1,5 @@
 from simplex_resolver import SimplexResolver
 from tableau_builder import TableauBuilder
-from fractions import Fraction
 
 class Simplex2Phases(SimplexResolver):
     
@@ -57,5 +56,6 @@ class Simplex2Phases(SimplexResolver):
 # str_problem = "Min 2*x1 +3*x2\n0.5*x1 +0.25*x2 <= 4\n1*x1 +3*x2 >= 36\n1*x1 +1*x2 = 10" 
 # str_problem = "Max 5*x1 +4*x2\n1*x1 +1*x2 <= 5\n10*x1 +6*x2 <= 45"
 str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 -2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n1*x1 +1*x2 +4*x3 <= 38"
-tableau_builder = TableauBuilder(str_problem=str_problem)
-print(Simplex2Phases(tableau_builder.build(), tableau_builder.problem_type).solve())
+tableau_builder = TableauBuilder(str_problem=str_problem, fract_result = False)
+simplex2phase = Simplex2Phases(tableau_builder.build(), tableau_builder.problem_type, fractional_result=False)
+simplex2phase.print_result(simplex2phase.solve())

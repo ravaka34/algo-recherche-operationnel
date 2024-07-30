@@ -114,15 +114,39 @@ class SimplexResolver:
                 for i in range(len(self.tableau.in_base_vars)):
                     nbr = self.tableau.solutions[i]
                     if self.tableau.in_base_vars[i] == var:
-                        if self.fractional_result:
-                            if abs(nbr % 1) <= 1e-6:
-                                result[var] = nbr
-                            else:
-                                result[var] = Fraction(nbr).limit_denominator()
-                        else:
-                            result[var] = nbr
+                        # dec = abs(nbr % 1)
+                        # if dec <= 1e-6:
+                        #     result[var] = str(int(nbr))
+                        # elif dec > 1e-6  and self.fractional_result:
+                        #     fraction = Fraction(nbr).limit_denominator()
+                        #     result[var] =  f"{fraction.numerator}/{fraction.denominator}"
+                        # else:
+                        #     result[var] = str(nbr)
+                        result[var] = nbr
+                        # if self.fractional_result:
+                        #     if abs(nbr % 1) <= 1e-6:
+                        #         result[var] = nbr
+                        #     else:
+                        #         result[var] = Fraction(nbr).limit_denominator()
+                        # else:
+                        #     result[var] = nbr
                         break
                 else:
                     result[var] = 0
         result["z"] = self.tableau.solutions[-1]
         return result
+    
+    def print_result(self, result):
+        for key in result :
+            nbr = result[key]
+            dec = abs(nbr % 1)
+            str_result = ""
+            if dec <= 1e-6:
+                str_result = str(int(nbr))
+            elif dec > 1e-6  and self.fractional_result:
+                fraction = Fraction(nbr).limit_denominator()
+                str_result =  f"{fraction.numerator}/{fraction.denominator}"
+            else:
+                str_result = str(nbr)
+            print(f'{key} => {str_result}')
+    

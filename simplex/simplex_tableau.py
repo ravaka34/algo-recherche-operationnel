@@ -2,7 +2,8 @@ from fractions import Fraction
 
 class SimplexTableau:
 
-    def __init__ (self, vars=[], in_base_vars = [], constraints = [[]], solutions = [], z = [], str_problem = ""):
+    def __init__ (self, vars=[], in_base_vars = [], constraints = [[]], solutions = [], z = [], str_problem = "", fract_result = False):
+        self.fract_result = fract_result
         self.vars = vars
         self.in_base_vars = in_base_vars
         self.constraints = constraints
@@ -30,11 +31,15 @@ class SimplexTableau:
         return False
 
     def render_float(self, nbr):
-        if abs(nbr % 1) <= 1e-6:
-           return str(nbr)
-        else:
+        dec = abs(nbr % 1)
+        # Entier
+        if dec <= 1e-6:
+           return str(int(nbr))
+        elif dec > 1e-6  and self.fract_result:
             fraction = Fraction(nbr).limit_denominator()
             return f"{fraction.numerator}/{fraction.denominator}"
+        else:
+            return str(nbr)
 
     def render(self):
         # Determine the number of variables
