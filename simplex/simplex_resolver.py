@@ -148,5 +148,5 @@ class SimplexResolver:
                 str_result =  f"{fraction.numerator}/{fraction.denominator}"
             else:
                 str_result = str(nbr)
-            print(f'{key} => {str_result}')
+            print(f'{key} = {str_result}')
     
