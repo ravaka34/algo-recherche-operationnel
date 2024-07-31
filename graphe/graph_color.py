@@ -85,13 +85,38 @@ def graph_color(graph):
     for vertex in vertex_desc_order.values():
         if vertex["color"] != -1:
             continue
+        current_color += 1
         vertex["color"] = current_color
         #Color all the non adjacent vertex with the same color
         vertex_desc_order = color_vertex_non_adj(vertex["row_index"], graph, current_color, vertex_desc_order)
-        current_color += 1
-
     return vertex_desc_order
 
+def print_result(results, vertex_name):
+    #print stable afaka miaraka 
+    keys = results.keys()
+    already_in = []
+    stables = []
+    for i in range(len(keys)):
+        stable = []
+        if i not in already_in :
+            stable.append(vertex_name[i])
+            already_in.append(i)
+            for j in range(i+1, len(keys)):
+                if j not in already_in and results[j]['color'] == results[i]['color']:
+                    already_in.append(j)
+                    stable.append(vertex_name[j])
+            stables.append(stable)
+        if stable:
+            print('Stable :'+str(stable))
+
+    #print couleur
+    for key in results:
+        print('Couleur '+vertex_name[key]+' -> '+str(results[key]['color']))
+
+    #print nbr chromatique
+    print('Chromatique -> '+str(len(stables)))
+
+    
 
 # graph = [
 #     [0, 1, 1, 0, 1],
@@ -114,7 +139,8 @@ graph = [
 ]
 
 solution = graph_color(graph)
-print(solution)
+# print(solution)
+print_result(solution, ['A', 'B', 'C', 'D', 'E', 'F', 'G'])
 
 
 

@@ -40,6 +40,7 @@ class TableauBuilder:
         )
 
     def build_objective_array(self):
+        # We multiply everything by -1 so that the z will be the right signe
         objective_array = [
             -self.transform_nbr_str_to_float(item.split("*")[0]) for item in self.parser.objective.split()[1:]
         ]
