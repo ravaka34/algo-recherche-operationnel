@@ -1,6 +1,7 @@
 from simplex_tableau import SimplexTableau
 from tableau_builder import TableauBuilder
 from fractions import Fraction
+from tools import is_entier
 
 class SimplexResolver:
 
@@ -114,22 +115,7 @@ class SimplexResolver:
                 for i in range(len(self.tableau.in_base_vars)):
                     nbr = self.tableau.solutions[i]
                     if self.tableau.in_base_vars[i] == var:
-                        # dec = abs(nbr % 1)
-                        # if dec <= 1e-6:
-                        #     result[var] = str(int(nbr))
-                        # elif dec > 1e-6  and self.fractional_result:
-                        #     fraction = Fraction(nbr).limit_denominator()
-                        #     result[var] =  f"{fraction.numerator}/{fraction.denominator}"
-                        # else:
-                        #     result[var] = str(nbr)
                         result[var] = nbr
-                        # if self.fractional_result:
-                        #     if abs(nbr % 1) <= 1e-6:
-                        #         result[var] = nbr
-                        #     else:
-                        #         result[var] = Fraction(nbr).limit_denominator()
-                        # else:
-                        #     result[var] = nbr
                         break
                 else:
                     result[var] = 0
@@ -139,11 +125,11 @@ class SimplexResolver:
     def print_result(self, result):
         for key in result :
             nbr = result[key]
-            dec = abs(nbr % 1)
+            entier = is_entier(nbr)
             str_result = ""
-            if dec <= 1e-6:
+            if entier:
                 str_result = str(int(nbr))
-            elif dec > 1e-6  and self.fractional_result:
+            elif entier == False and self.fractional_result:
                 fraction = Fraction(nbr).limit_denominator()
                 str_result =  f"{fraction.numerator}/{fraction.denominator}"
             else:

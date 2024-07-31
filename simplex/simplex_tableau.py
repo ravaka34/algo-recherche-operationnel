@@ -1,4 +1,5 @@
 from fractions import Fraction
+from tools import is_entier
 
 class SimplexTableau:
 
@@ -31,11 +32,11 @@ class SimplexTableau:
         return False
 
     def render_float(self, nbr):
-        dec = abs(nbr % 1)
+        entier =  is_entier(nbr)
         # Entier
-        if dec <= 1e-6:
+        if entier :
            return str(int(nbr))
-        elif dec > 1e-6  and self.fract_result:
+        elif entier == False and self.fract_result:
             fraction = Fraction(nbr).limit_denominator()
             return f"{fraction.numerator}/{fraction.denominator}"
         else:

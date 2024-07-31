@@ -1,6 +1,7 @@
 from simplex_2_phases import Simplex2Phases
 from tableau_builder import TableauBuilder
 from simplex_tableau import SimplexTableau
+from tools import is_entier
 
 class PLNE(Simplex2Phases):
 
@@ -51,7 +52,7 @@ class PLNE(Simplex2Phases):
                     tab1 = TableauBuilder(str_problem=tableau.str_problem+constraint, fract_result=self.tableau.fract_result).build()
                     self.brunch(tab1)
 
-        if all_integer and abs(result['z'] % 1) <= 1e-6:
+        if all_integer and  is_entier(result['z']):
             self.optimum_result ['result'] = result
             self.optimum_result ['tableau'] = tableau
             self.optimum_z_value = result['z']
@@ -83,6 +84,6 @@ str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3
 # str_problem = "Max 10*x1 +14*x2 +12*x3\n1*x1 +3*x2 +2*x3 <= 40\n3*x1 +2*x2 +1*x3 <= 45\n3*x1 +2*x2 +1*x3 >= 46\n1*x1 +1*x2 +4*x3 <= 38"
 
 tableau_builder = TableauBuilder(str_problem=str_problem, fract_result=True)
-plne_solver = PLNE(tableau_builder.build(), tableau_builder.problem_type, fractional_result=False)
+plne_solver = PLNE(tableau_builder.build(), tableau_builder.problem_type, fractional_result=True)
 plne_solver.solve()
 plne_solver.render_result()
